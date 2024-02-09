@@ -14,7 +14,11 @@ import AppNavbar from './components/AppNavbar.jsx'
 import AppFooter from "./components/AppFooter.jsx";
 import FilmDetails from './pages/FilmDetails/FilmDetails.jsx';
 import BuyTickets from './pages/BuyTickets/BuyTickets.jsx';
+import Entradas from './pages/BuyTickets/Entradas.jsx';
+import Favoritas from './pages/Films/Favoritas.jsx';
 
+import { Provider } from 'react-redux'
+import store from './store.js';
 
 //en outlet se redenrizan los diferentes componentes (páginas)
 
@@ -46,6 +50,14 @@ const router = createBrowserRouter([
     {
       path: "/buyTickets/:id",
       element: <BuyTickets/>,
+    },
+    {
+      path: "/entradas",
+      element: <Entradas/>,
+    },
+    {
+      path: "/favoritas",
+      element: <Favoritas/>,
     }]
   }
 ]);
@@ -53,6 +65,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>,
 )

@@ -1,35 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getMoviesBy } from '../../services/films';
+import { getFilms } from '../../slices/filmsThunks';
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './Home.css';
+import { useDispatch, useSelector } from 'react-redux';
 
 function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [films, setFilms] = useState([]);
+  const dispatch = useDispatch();
+  const {films} = useSelector( state => state.films)
 
-  const fetchEstrenos = async () => {
-    try {
-      const response = await getMoviesBy("");
-
-      if (!response || !response.description || !Array.isArray(response.description)) {
-        throw new Error('Results not available in the expected format in the API response');
-      }
-
-      const sortedFilms = response.description.sort((a, b) => a["#RANK"] - b["#RANK"]);
-
-      setFilms(sortedFilms);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error fetching estrenos:', error);
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchEstrenos();
+    dispatch(getFilms());
   }, []);
 
   const settings = {
@@ -90,9 +74,6 @@ function Home() {
       <section>
         <h1 className='font-rubiksh text-3xl text-gray-200 font-bold tracking-tighter sm:text-4xl lg:text-6xl relative z-10'>Estrenos</h1>
         <div className="h-96 mb-60 mt-6 sm:h-96 xl:h-96 2xl:h-96 relative z-10">
-          {isLoading ? (
-            <p>Cargando estrenos...</p>
-          ) : (
             <Slider {...settings}>
               {films.map((film) => (
                 <div key={film["#IMDB_ID"]} className="relative">
@@ -112,7 +93,6 @@ function Home() {
                 </div>
               ))}
             </Slider>
-          )}
         </div>
       </section>
     </>

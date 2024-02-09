@@ -10,6 +10,8 @@ import { NavLink, Link } from "react-router-dom";
 const links = [
     { name: "Inicio", path: "/" },
     { name: "Catálogo", path: "/films" },
+    { name: "Mis entradas", path: "/entradas" },
+    { name: "Mis favoritas", path: "/favoritas" },
 ];
 
 const activeLinkClass = 'block py-2 px-3 text-primary-500 rounded md:p-0'

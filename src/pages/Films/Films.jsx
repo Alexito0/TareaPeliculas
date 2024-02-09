@@ -1,46 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { getMoviesBy } from '../../services/films';
 import FilmPoster from '../../components/FilmPoster';
+import { useDispatch, useSelector } from 'react-redux';
+import { getFilms } from "../../slices/filmsThunks";
 
 function Films() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [films, setFilms] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
+  const dispatch = useDispatch();
+  const {films} = useSelector( state => state.films)
+
   useEffect(() => {
-    const fetchFilms = async () => {
-      try {
-        const response = await getMoviesBy(searchTerm);
-        if (!response || !response.description || !Array.isArray(response.description)) {
-          throw new Error('Results not available in the expected format in the API response');
-        }
-
-        setFilms(response.description);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching films:', error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchFilms();
+    dispatch(getFilms(searchTerm));
   }, [searchTerm]);
+
+  useEffect(() => {
+    setSearchResults(films);
+  }, [films, searchTerm]);
 
   const handleSearch = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-
-    try {
-      const response = await getMoviesBy(term);
-      if (!response || !response.description || !Array.isArray(response.description)) {
-        throw new Error('Results not available in the expected format in the API response');
-      }
-
-      setSearchResults(response.description);
-    } catch (error) {
-      console.error('Error searching films:', error);
-    }
   };
 
   return (
@@ -58,13 +39,9 @@ function Films() {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {isLoading ? (
-          <p>Cargando películas...</p>
-        ) : (
-          (searchTerm === "" ? films : searchResults).map((film) => (
-            <FilmPoster key={film["#IMDB_ID"]} film={film} />
-          ))
-        )}
+          {(searchTerm === "" ? films : searchResults).map((film) => 
+          <FilmPoster key={film["#IMDB_ID"]} film={film} />
+        )}  
       </div>
     </section>
   );
